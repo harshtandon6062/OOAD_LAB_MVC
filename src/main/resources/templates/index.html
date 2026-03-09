@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Package Delivery Tracker</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 24px; background: #f7f9fb; color: #222; }
+        .container { max-width: 1100px; margin: auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.08); }
+        h1 { margin-top: 0; }
+        .meta { font-weight: bold; margin-bottom: 15px; }
+        form { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+        label { display: block; font-weight: 600; margin-bottom: 5px; }
+        input, select { width: 100%; padding: 8px; border: 1px solid #bfc8d1; border-radius: 6px; }
+        .full-width { grid-column: 1 / -1; }
+        button { background: #0b66c3; color: white; border: none; border-radius: 6px; padding: 10px 16px; cursor: pointer; font-weight: 700; }
+        button:hover { background: #084c91; }
+        .msg-success { color: #0a7b2f; margin: 10px 0; }
+        .msg-error { color: #b00020; margin: 10px 0; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { border: 1px solid #d7dee5; padding: 8px; text-align: left; }
+        th { background: #eef3f8; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Smart Package Delivery Tracking System</h1>
+    <div class="meta">Author Name: YOUR_NAME_HERE</div>
+
+    <div th:if="${successMessage}" class="msg-success" th:text="${successMessage}"></div>
+    <div th:if="${errorMessage}" class="msg-error" th:text="${errorMessage}"></div>
+
+    <h2>Package Registration Form</h2>
+    <form th:action="@{/save}" th:object="${packageForm}" method="post">
+        <div>
+            <label for="trackingId">Tracking ID</label>
+            <input id="trackingId" type="text" th:field="*{trackingId}" required>
+        </div>
+        <div>
+            <label for="senderName">Sender Name</label>
+            <input id="senderName" type="text" th:field="*{senderName}" required>
+        </div>
+        <div>
+            <label for="receiverName">Receiver Name</label>
+            <input id="receiverName" type="text" th:field="*{receiverName}" required>
+        </div>
+        <div>
+            <label for="destinationCity">Destination City</label>
+            <input id="destinationCity" type="text" th:field="*{destinationCity}" required>
+        </div>
+        <div class="full-width">
+            <label for="deliveryStatus">Delivery Status</label>
+            <select id="deliveryStatus" th:field="*{deliveryStatus}" required>
+                <option value="">--Select Status--</option>
+                <option value="Dispatched">Dispatched</option>
+                <option value="In Transit">In Transit</option>
+                <option value="Delivered">Delivered</option>
+            </select>
+        </div>
+        <div class="full-width">
+            <button type="submit">Submit</button>
+        </div>
+    </form>
+
+    <h2>Package Tracking Table</h2>
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Tracking ID</th>
+            <th>Sender Name</th>
+            <th>Receiver Name</th>
+            <th>Destination City</th>
+            <th>Delivery Status</th>
+            <th>Created Time</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:if="${#lists.isEmpty(packages)}">
+            <td colspan="7">No package records yet.</td>
+        </tr>
+        <tr th:each="pkg : ${packages}">
+            <td th:text="${pkg.id}"></td>
+            <td th:text="${pkg.trackingId}"></td>
+            <td th:text="${pkg.senderName}"></td>
+            <td th:text="${pkg.receiverName}"></td>
+            <td th:text="${pkg.destinationCity}"></td>
+            <td th:text="${pkg.deliveryStatus}"></td>
+            <td th:text="${#temporals.format(pkg.createdTime, 'yyyy-MM-dd HH:mm:ss')}"></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>
